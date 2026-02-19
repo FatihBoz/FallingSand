@@ -10,6 +10,11 @@
 //Create factories for each material and store their behaviours in the vector
 void Game::initializeBehaviours()
 {
+    /*Actually factory pattern is not necessary here
+	But it allows us to easily add new materials in the future
+    without modifying existing code when we want to
+    add different types of materials - ex: 3 types of sand*/
+
     SandFactory sandFactory;
     WaterFactory waterFactory;
 	WallFactory wallFactory;

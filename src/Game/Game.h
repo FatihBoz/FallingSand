@@ -23,7 +23,7 @@ private:
 
     //Gameplay
     Material currentMaterial;
-    std::vector<std::unique_ptr<MaterialBehaviour>> behaviours;
+    std::vector<std::unique_ptr<MaterialBehaviour>> behaviours;  
 
     //Timing
     sf::Clock clock;
