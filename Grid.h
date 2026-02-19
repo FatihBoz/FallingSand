@@ -38,6 +38,7 @@ private:
     int rows;
     int columns;
 
+
 public:
     Grid(int rowCount, int columnCount);
 
@@ -53,7 +54,7 @@ public:
 
     bool trySwap(int x1, int y1, int x2, int y2);
 
-    int checkForInteraction(int index1, int index2);
+    InteractionResult checkForInteraction(int index1, int index2);
 
     void markActive(int index);
 

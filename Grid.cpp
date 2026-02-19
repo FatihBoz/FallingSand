@@ -1,11 +1,17 @@
 #include "Grid.h"
 #include "MaterialBehaviour.h"
 
-Grid::Grid(int rowCount, int columnCount) : rows(rowCount), columns(columnCount), gridArr(rowCount* columnCount), interactionTable(static_cast<int>(Material::COUNT))
+Grid::Grid(int rowCount, int columnCount)
+    : interactionTable(static_cast<int>(Material::COUNT)),
+    isActive(),
+    activeCells(),
+    gridArr(rowCount* columnCount),
+    rows(rowCount),
+    columns(columnCount)
 {
     // to prevent fps drops while doubling the array size in much bigger scale.
     activeCells.reserve(rowCount * columnCount);
-	isActive.resize(rowCount * columnCount, false);
+    isActive.resize(rowCount * columnCount, false);
 }
 
 int& Grid::getValue(int x, int y)
@@ -27,18 +33,18 @@ void Grid::addCell(int x, int y, int value) {
 
 void Grid::update(std::vector<std::unique_ptr<MaterialBehaviour>>& behaviours)
 {
-	//Iterating backwards to avoid issues with activeCells being modified during iteration
-    for (int i = static_cast<int>(activeCells.size()) - 1; i >= 0; --i)
+    for (int y = rows - 2; y >= 0; --y)
     {
-        int index = activeCells[i];
+        for (int x = 0; x < columns; ++x)
+        {
+            int index = y * columns + x;
 
-        if (gridArr[index] == 0) continue;
+            int value = gridArr[index];
+            if (value == 0)
+                continue;
 
-        int value = gridArr[index];
-        int x = index % columns;
-        int y = index / columns;
-
-        behaviours[value]->update(*this, x, y);
+            behaviours[value]->update(*this, x, y);
+        }
     }
 }
 
@@ -73,6 +79,9 @@ void Grid::drawGrid(sf::RenderWindow& window, int CELL_SIZE)
             case 4:
                 cell.setFillColor(sf::Color::Red);
 				break;
+            case 5:
+                cell.setFillColor(sf::Color::Green);
+				break;
 
             default:
                 break;
@@ -98,13 +107,16 @@ bool Grid::trySwap(int x1, int y1, int x2, int y2) {
 
     if (gridArr[index2] != 0) {
 
-        int mat = checkForInteraction(gridArr[index1], gridArr[index2]);
-        if (mat != -1) {
-            // interaction: write result to destination, clear source
-            gridArr[index2] = mat;
-            gridArr[index1] = 0;
+        auto mat = checkForInteraction(gridArr[index1], gridArr[index2]);
+        if (mat.result != -1) {
 
-            markActive(index2);
+            if (mat.affectSource)
+                gridArr[index1] = mat.result;
+
+            else {
+                gridArr[index2] = mat.result;
+                gridArr[index1] = 0;
+            }
         }
 
         return false;
@@ -112,11 +124,10 @@ bool Grid::trySwap(int x1, int y1, int x2, int y2) {
 
 
     std::swap(gridArr[index1], gridArr[index2]);
-    markActive(index2);
 
     return true;
 }
-int Grid::checkForInteraction(int index1, int index2) {
+InteractionResult Grid::checkForInteraction(int index1, int index2) {
 
     return interactionTable.getInteraction(index1, index2);
 }

@@ -7,5 +7,6 @@ enum Material : int
     WATER = 2,
 	WALL = 3,
 	LAVA = 4,
-    COUNT = 5,
+	PLANT = 5,
+    COUNT = 6,
 };
