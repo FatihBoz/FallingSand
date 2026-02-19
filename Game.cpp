@@ -102,8 +102,8 @@ void Game::update()
     float oneIterationTime = clock.restart().asSeconds();
     elapsedTime += oneIterationTime;
 
-    if (elapsedTime >= step) {
-		grid.update(behaviours);
+    while (elapsedTime >= step) {
+        grid.update(behaviours);
         elapsedTime -= step;
     }
 }

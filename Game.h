@@ -15,7 +15,7 @@ private:
     static constexpr int GRID_WIDTH = 240;
     static constexpr int GRID_HEIGHT = 120;
     static constexpr int CELL_SIZE = 5;
-    static constexpr int STEP_PER_SECOND = 200;
+    static constexpr int STEP_PER_SECOND = 100;
 
     //Window
     sf::RenderWindow window;
